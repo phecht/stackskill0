@@ -16,6 +16,15 @@ func main() {
 	}
 	fmt.Printf("Hello %v\n", name)
 	remainer()
+	fmt.Println("Press a key for listNum..")
+	fmt.Scanln()
+	listNum()
+	fmt.Println("Press a key for fizzBuzz..")
+	fmt.Scanln()
+	fizzBuzz()
+	fmt.Println("Press a key for fizzCount..")
+	fmt.Scanln()
+	fizzCount()
 }
 
 func remainer() {
@@ -38,5 +47,42 @@ func remainer() {
 		fmt.Println("Run again and please have smaller number, actually smaller than the larger number!")
 	}
 	theRemander = largeNum - (smallNum % largeNum)
-	fmt.Printf("Small %v, Large %v, remainder %v", smallNum, largeNum, theRemander)
+	fmt.Printf("Small %v, Large %v, remainder %v\n", smallNum, largeNum, theRemander)
+}
+
+func listNum() {
+	for i := 0; i <= 100; i++ {
+		fmt.Println(i)
+	}
+}
+
+func fizzBuzz() {
+
+	for fb := 1; fb <= 100; fb++ {
+		normal := true
+		if fb%3 == 0 {
+			fmt.Printf("FIZZ")
+			normal = false
+		}
+		if fb%5 == 0 {
+			fmt.Printf("BUZZ")
+			normal = false
+		}
+		if normal {
+			fmt.Printf("%v", fb)
+		}
+		fmt.Println()
+	}
+}
+
+func fizzCount() {
+
+	var total35 int
+	for fb := 1; fb < 1000; fb++ {
+
+		if fb%3 == 0 || fb%5 == 0 {
+			total35 += fb
+		}
+	}
+	fmt.Printf("Total is %d\n", total35)
 }
