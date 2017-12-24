@@ -25,8 +25,45 @@ func main() {
 	fmt.Println("Press a key for fizzCount..")
 	fmt.Scanln()
 	fizzCount()
+	fmt.Println("Press a key for Half..")
+	fmt.Scanln()
+	fmt.Println(half(3))
+	h := func(i int) (r int, e bool) {
+		return i / 2, i%2 == 0
+	}
+	fmt.Println(h(6))
+
+	fmt.Println((true && false) || (false && true) || !(false && false))
+	fmt.Println("Press a key for largestInt..")
+	fmt.Scanln()
+	nums := []int{3, 10, 50, 10, 1762, 1729, 4}
+	largestInt(nums...)
+	fmt.Println("Press a key for foo..")
+	fmt.Scanln()
+	foo(1, 2)
+	foo(1, 2, 3)
+	foo(nums...)
+
 }
 
+func foo(numberList ...int) {
+	for _, num := range numberList {
+		fmt.Printf("%d\n", num)
+
+	}
+}
+
+func largestInt(numberList ...int) {
+	var lI int
+	lI = 0
+	for _, num := range numberList {
+		if num > lI {
+			lI = num
+		}
+
+	}
+	fmt.Printf("%d\n", lI)
+}
 func remainer() {
 	var smallNum, largeNum, theRemander int
 	var err error
@@ -46,7 +83,7 @@ func remainer() {
 	if smallNum >= largeNum {
 		fmt.Println("Run again and please have smaller number, actually smaller than the larger number!")
 	}
-	theRemander = largeNum - (smallNum % largeNum)
+	theRemander = (largeNum % smallNum)
 	fmt.Printf("Small %v, Large %v, remainder %v\n", smallNum, largeNum, theRemander)
 }
 
@@ -85,4 +122,10 @@ func fizzCount() {
 		}
 	}
 	fmt.Printf("Total is %d\n", total35)
+}
+
+func half(sum int) (x int, even bool) {
+	x = sum / 2
+	even = (sum%2 == 0)
+	return x, even
 }
