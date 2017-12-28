@@ -11,6 +11,11 @@ and https://tour.golang.org/flowcontrol/8
 the round and toFIxed are modified from https://stackoverflow.com/questions/18390266/how-can-we-truncate-float64-type-to-a-particular-precision-in-golang
 
 */
+/*
+
+If we could get a function and a derivative of that function, this should also work.
+This is hard coded for squares.
+*/
 func sqrt(value, guess float64) float64 {
 	guess -= (guess*guess - value) / (2 * guess)
 	return guess
@@ -31,6 +36,11 @@ func main() {
 	guess := 1.0
 	result := 1.0
 	square := 40073467.0
+	fmt.Println("Enter number to find square:")
+	fmt.Scan(&square)
+	fmt.Println(square)
+	fmt.Println("Press...")
+	fmt.Scanln()
 	myprecision := 11
 	for i := 1; i < 200; i++ {
 		result = guess
@@ -39,8 +49,10 @@ func main() {
 		fmt.Println("Guess", toFixed(guess, myprecision))
 		if toFixed(guess, myprecision) == toFixed(result, myprecision) {
 			fmt.Println(toFixed(guess, myprecision))
-			return
+			break
 
 		}
 	}
+
+	fmt.Printf("%v is math.Sqrt(square)", math.Sqrt(square))
 }
