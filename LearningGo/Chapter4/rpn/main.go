@@ -16,7 +16,6 @@ func executeIt(st stack.Stack, op string) (ret int, err error) {
 	q, _ := st.Pop()
 	switch op {
 	case "+":
-		fmt.Println(q, "+", p)
 		ret = q + p
 	case "-":
 		ret = q - p
