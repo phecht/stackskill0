@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-unc arraySkill5() {
+func arraySkill5() {
 	var x [256]string
 
 	fmt.Println(len(x))
@@ -41,7 +41,6 @@ func arraySkill3() {
 		}
 	}
 }
-f
 
 func arraySkill2() {
 	var nums [256]int
