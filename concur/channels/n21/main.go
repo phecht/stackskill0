@@ -11,28 +11,30 @@ func main() {
 
 	myCh := make(chan string)
 
-	wq.Add(3)
+	wq.Add(2)
 	go func() {
+		defer wq.Done()
 		for i := 0; i < 10; i++ {
 			myCh <- "anom 1"
 		}
-		wq.Done()
 	}()
 
 	go func() {
+		defer wq.Done()
 		for i := 0; i < 10; i++ {
 			myCh <- "anom 2"
 		}
 
 		/* 		fmt.Println(<-myCh)
 		   		fmt.Println("Clear!") */
-		wq.Done()
+
 	}()
 
 	go func() {
 		wq.Wait()
 		close(myCh)
-		wq.Done()
+		fmt.Println("Closed myCH")
+
 	}()
 
 	for ch := range myCh {
