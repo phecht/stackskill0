@@ -41,6 +41,9 @@ func incrementor(incQty int) <-chan string {
 	done := make(chan bool)
 
 	for i := 0; i < incQty; i++ {
+		// send out a function that will do the adding.
+		// putting the results on out
+		// putting on the done channel when done.
 		go func(i int) {
 			for j := 0; j < 20; j++ {
 				//atomic.AddInt64(&count, 1)
@@ -52,11 +55,14 @@ func incrementor(incQty int) <-chan string {
 		}(i)
 
 	}
+
+	// this function will pull off the done for each function call above.
 	go func() {
 		for i := 0; i < incQty; i++ {
 			<-done
 		}
 		close(out)
+		close(done)
 	}()
 	return out
 	//wg.Done()
