@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math"
+	"runtime"
 	"sync"
 	"time"
 )
@@ -133,23 +134,33 @@ func main() {
 
 	}
 
-	done0 := make(chan interface{})
-	aLotOfInts := make([]int, 5)
-	for i := 5; i < 1000000; i++ {
+	const getNumberOfPrimes = 3000000
+
+	aLotOfInts := make([]int, 50000)
+	for i := 5; i < getNumberOfPrimes; i++ {
 		aLotOfInts = append(aLotOfInts, i)
 	}
 
+	done0 := make(chan interface{})
+	defer close(done0)
+
 	primeStream := generator(done0, aLotOfInts...)
-	//	primeStream := generator(done0, 1, 2, 3, 4, 5, 1729, 17, 47)
-	numFinders := 10
+
+	numFinders := runtime.NumCPU()
 	finders := make([]<-chan int, numFinders)
 	for i := 0; i < numFinders; i++ {
 		finders[i] = notSmartPrime1(done0, primeStream)
 	}
 
-	for p := range take(done0, fanIn(done0, finders...), 100) {
+	// done1 := make(chan interface{})
+	for p := range take(done0, fanIn(done0, finders...), getNumberOfPrimes) {
+		//	for p := range fanIn(done0, finders...) {
+		if p == nil {
+			break
+		}
 		fmt.Printf("prime: %v\n", p)
 	}
 	fmt.Printf("This took: %v\n", time.Since(start))
+	fmt.Printf("With %v processors.\n", numFinders)
 
 }
