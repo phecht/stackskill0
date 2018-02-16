@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"math"
+	"sync"
+	"time"
 )
 
 func hardIsPrime(num uint64) bool {
@@ -21,6 +23,7 @@ func hardIsPrime(num uint64) bool {
 }
 
 func main() {
+	start := time.Now()
 
 	/* 	Input: an integer n > 1.
 
@@ -81,17 +84,72 @@ func main() {
 		return intStream
 	}
 
+	fanIn := func(
+		done <-chan interface{},
+		channels ...<-chan int,
+	) <-chan interface{} {
+		var wq sync.WaitGroup
+		localStream := make(chan interface{})
+
+		multiplex := func(c <-chan int) {
+			defer wq.Done()
+			for i := range c {
+				select {
+				case <-done:
+					return
+				case localStream <- i:
+				}
+			}
+		}
+		wq.Add(len(channels))
+		for _, c := range channels {
+			go multiplex(c)
+		}
+		go func() {
+			wq.Wait()
+			close(localStream)
+		}()
+		return localStream
+	}
+
+	take := func(
+		done <-chan interface{},
+		valueStream <-chan interface{},
+		num int,
+	) <-chan interface{} {
+		takeStream := make(chan interface{})
+		go func() {
+			defer close(takeStream)
+			for i := 0; i < num; i++ {
+				select {
+				case <-done:
+					return
+				case takeStream <- <-valueStream:
+				}
+			}
+
+		}()
+		return takeStream
+
+	}
+
 	done0 := make(chan interface{})
 	aLotOfInts := make([]int, 5)
 	for i := 5; i < 1000000; i++ {
 		aLotOfInts = append(aLotOfInts, i)
 	}
+
 	primeStream := generator(done0, aLotOfInts...)
 	//	primeStream := generator(done0, 1, 2, 3, 4, 5, 1729, 17, 47)
-
-	for p := range notSmartPrime1(done0, primeStream) {
-		fmt.Printf("prime: %v\n", p)
-
+	numFinders := 10
+	finders := make([]<-chan int, numFinders)
+	for i := 0; i < numFinders; i++ {
+		finders[i] = notSmartPrime1(done0, primeStream)
 	}
+
+	for p := range take(done0, fanIn(done0, finders...), 100) {
+		fmt.Printf("prime: %v\n", p)
+	}
+	fmt.Printf("This took: %v\n", time.Since(start))
 
 }
